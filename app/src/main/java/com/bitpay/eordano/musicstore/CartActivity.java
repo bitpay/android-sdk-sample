@@ -17,16 +17,9 @@ import com.bitpay.eordano.musicstore.models.Invoice;
 import com.bitpay.eordano.musicstore.models.Item;
 import com.bitpay.sdk.android.BitPayAndroid;
 import com.bitpay.sdk.android.InvoiceActivity;
-import com.bitpay.sdk.controller.BitPay;
-import com.bitpay.sdk.controller.BitPayException;
-import com.bitpay.sdk.controller.KeyUtils;
 
-import org.apache.commons.logging.Log;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 
 public class CartActivity extends Activity {
@@ -43,7 +36,7 @@ public class CartActivity extends Activity {
         dialog.setCancelable(false);
         dialog.setTitle("Creating invoice...");
         dialog.show();
-        new BitPayAndroid.GetBitPayClientTask() {
+        new BitPayAndroid.GetClientTask() {
             @Override
             protected void onPostExecute(final BitPayAndroid bitPayAndroid) {
                 new BitPayAndroid.CreateInvoiceTask(bitPayAndroid) {
@@ -52,13 +45,9 @@ public class CartActivity extends Activity {
                         if (invoice != null) {
 
                             Intent invoiceIntent = new Intent(CartActivity.this, InvoiceActivity.class);
-                            invoiceIntent.putExtra("mInvoiceId", invoice.getId());
-                            invoiceIntent.putExtra("mPaymentUri", invoice.getUrl());
-                            try {
-                                invoiceIntent.putExtra("mEcKey", KeyUtils.exportEcKey(bitPayAndroid.mBitpay._ecKey));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            invoiceIntent.putExtra(InvoiceActivity.INVOICE_ID, invoice.getId());
+                            invoiceIntent.putExtra(InvoiceActivity.PAYMENT_URI, invoice.getUrl());
+                            invoiceIntent.putExtra(InvoiceActivity.PRIVATE_KEY, bitPayAndroid.getPrivateKey());
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

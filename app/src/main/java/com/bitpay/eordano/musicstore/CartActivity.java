@@ -3,8 +3,8 @@ package com.bitpay.eordano.musicstore;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +17,10 @@ import com.bitpay.eordano.musicstore.models.Invoice;
 import com.bitpay.eordano.musicstore.models.Item;
 import com.bitpay.sdk.android.BitPayAndroid;
 import com.bitpay.sdk.android.InvoiceActivity;
+import com.bitpay.sdk.android.interfaces.BitpayPromiseCallback;
+import com.bitpay.sdk.android.interfaces.InvoicePromiseCallback;
+import com.bitpay.sdk.controller.BitPayException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -36,30 +38,39 @@ public class CartActivity extends Activity {
         dialog.setCancelable(false);
         dialog.setTitle("Creating invoice...");
         dialog.show();
-        new BitPayAndroid.GetClientTask() {
+        BitPayAndroid.withToken(getString(R.string.token), "https://test.bitpay.com/").then(new BitpayPromiseCallback() {
             @Override
-            protected void onPostExecute(final BitPayAndroid bitPayAndroid) {
-                new BitPayAndroid.CreateInvoiceTask(bitPayAndroid) {
+            public void onSuccess(final BitPayAndroid bitpay) {
+                bitpay.createNewInvoice(new com.bitpay.sdk.model.Invoice(total, "USD")).then(new InvoicePromiseCallback() {
                     @Override
-                    protected void onPostExecute(com.bitpay.sdk.model.Invoice invoice) {
-                        if (invoice != null) {
+                    public void onSuccess(com.bitpay.sdk.model.Invoice invoice) {
 
-                            Intent invoiceIntent = new Intent(CartActivity.this, InvoiceActivity.class);
-                            invoiceIntent.putExtra(InvoiceActivity.INVOICE_ID, invoice.getId());
-                            invoiceIntent.putExtra(InvoiceActivity.PAYMENT_URI, invoice.getUrl());
-                            invoiceIntent.putExtra(InvoiceActivity.PRIVATE_KEY, bitPayAndroid.getPrivateKey());
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dialog.dismiss();
-                                }
-                            });
-                            startActivity(invoiceIntent);
-                        }
+                        Intent invoiceIntent = new Intent(CartActivity.this, InvoiceActivity.class);
+                        invoiceIntent.putExtra(InvoiceActivity.INVOICE, invoice);
+                        invoiceIntent.putExtra(InvoiceActivity.PRIVATE_KEY, bitpay.getPrivateKey());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                            }
+                        });
+                        startActivity(invoiceIntent);
                     }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new com.bitpay.sdk.model.Invoice(total, "USD"));
+
+                    @Override
+                    public void onError(BitPayException e) {
+                        dialog.dismiss();
+                        e.printStackTrace();
+                    }
+                });
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getString(R.string.privateKey));
+
+            @Override
+            public void onError(BitPayException e) {
+                dialog.dismiss();
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override

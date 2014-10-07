@@ -111,6 +111,7 @@ public class CartActivity extends Activity {
 
     private void calculateValues() {
         data.clear();
+        total = 0.0;
         for (Item item : Invoice.ITEMS) {
             if (invoice.get(item) != 0) {
                 double price = invoice.get(item) * item.price;

@@ -1,4 +1,4 @@
-package com.bitpay.eordano.musicstore.models;
+package com.bitpay.sample.musicstore.models;
 
 /**
  * Created by eordano on 9/9/14.

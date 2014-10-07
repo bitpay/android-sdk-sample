@@ -1,4 +1,4 @@
-package com.bitpay.eordano.musicstore;
+package com.bitpay.sample.musicstore;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bitpay.eordano.musicstore.models.Invoice;
-import com.bitpay.eordano.musicstore.models.Item;
+import com.bitpay.sample.musicstore.models.Invoice;
+import com.bitpay.sample.musicstore.models.Item;
 
 
 public class MainActivity extends ListActivity {

@@ -1,4 +1,4 @@
-package com.bitpay.eordano.musicstore.models;
+package com.bitpay.sample.musicstore.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

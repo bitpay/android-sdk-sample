@@ -1,10 +1,9 @@
-package com.bitpay.eordano.musicstore;
+package com.bitpay.sample.musicstore;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bitpay.eordano.musicstore.models.Invoice;
-import com.bitpay.eordano.musicstore.models.Item;
+import com.bitpay.sample.musicstore.models.Invoice;
+import com.bitpay.sample.musicstore.models.Item;
 import com.bitpay.sdk.android.BitPayAndroid;
 import com.bitpay.sdk.android.InvoiceActivity;
 import com.bitpay.sdk.android.interfaces.BitpayPromiseCallback;

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MusicStore.iml" filepath="$PROJECT_DIR$/MusicStore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-sdk-sample.iml" filepath="$PROJECT_DIR$/android-sdk-sample.iml" />
       <module fileurl="file://$PROJECT_DIR$/android-sdk-testproject.iml" filepath="$PROJECT_DIR$/android-sdk-testproject.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bitpay.sample.musicstore" >
 
-    <uses-library
-    android:name="com.bitpay.sample"
-    android:required="true" />
-
     <application
         tools:replace="android:label"
         android:allowBackup="true"

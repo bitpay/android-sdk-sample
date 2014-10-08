@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bitpay.sample.musicstore.models.Invoice;
 import com.bitpay.sample.musicstore.models.Item;
@@ -28,6 +29,7 @@ public class CartActivity extends Activity {
     private Invoice invoice;
     private ArrayList<String> data = new ArrayList<String>();
     private double total = 0.0;
+    private int PAYMENT_RESULT = 12;
 
     private void sendInvoice() {
 
@@ -46,14 +48,14 @@ public class CartActivity extends Activity {
 
                         Intent invoiceIntent = new Intent(CartActivity.this, InvoiceActivity.class);
                         invoiceIntent.putExtra(InvoiceActivity.INVOICE, invoice);
-                        invoiceIntent.putExtra(InvoiceActivity.PRIVATE_KEY, bitpay.getPrivateKey());
+                        invoiceIntent.putExtra(InvoiceActivity.CLIENT, bitpay);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 dialog.dismiss();
                             }
                         });
-                        startActivity(invoiceIntent);
+                        startActivityForResult(invoiceIntent, PAYMENT_RESULT);
                     }
 
                     @Override
@@ -70,6 +72,25 @@ public class CartActivity extends Activity {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PAYMENT_RESULT) {
+            if (resultCode == InvoiceActivity.RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "Thanks for shopping with us!", Toast.LENGTH_LONG).show();
+            }
+            if (resultCode == InvoiceActivity.RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "The payment was canceled", Toast.LENGTH_LONG).show();
+            }
+            if (resultCode == InvoiceActivity.RESULT_EXPIRED) {
+                Toast.makeText(getApplicationContext(), "The payment window expired", Toast.LENGTH_LONG).show();
+            }
+            if (resultCode == InvoiceActivity.RESULT_USER_CANCELED) {
+                Toast.makeText(getApplicationContext(), "Back button pressed", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override

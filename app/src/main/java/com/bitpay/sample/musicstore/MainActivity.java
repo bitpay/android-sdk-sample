@@ -11,16 +11,16 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bitpay.sample.musicstore.models.Invoice;
+import com.bitpay.sample.musicstore.models.MyInvoice;
 import com.bitpay.sample.musicstore.models.Item;
 
 
 public class MainActivity extends ListActivity {
 
-    private Invoice invoice;
+    private MyInvoice invoice;
 
     public MainActivity() {
-        this.invoice = new Invoice();
+        this.invoice = new MyInvoice();
     }
 
     @Override
@@ -30,12 +30,12 @@ public class MainActivity extends ListActivity {
 
             @Override
             public int getCount() {
-                return Invoice.ITEMS.size();
+                return MyInvoice.ITEMS.size();
             }
 
             @Override
             public Object getItem(int i) {
-                return Invoice.ITEMS.get(i);
+                return MyInvoice.ITEMS.get(i);
             }
 
             @Override
@@ -48,7 +48,7 @@ public class MainActivity extends ListActivity {
                 if (convertView == null) {
                     convertView = getLayoutInflater().inflate(R.layout.catalog_item, null);
                 }
-                final Item item = Invoice.ITEMS.get(position);
+                final Item item = MyInvoice.ITEMS.get(position);
                 ((TextView) convertView.findViewById(R.id.itemTitle)).setText(item.name + String.format(" ($ %.2f)", item.price));
                 ((TextView) convertView.findViewById(R.id.itemAmount)).setText(
                         invoice.get(item) == 0 ? "None in the cart." : String.format("%d in the cart.", invoice.get(item)));

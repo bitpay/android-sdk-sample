@@ -13,23 +13,27 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bitpay.sample.musicstore.models.Invoice;
+import com.bitpay.sample.musicstore.models.MyInvoice;
 import com.bitpay.sample.musicstore.models.Item;
 import com.bitpay.sdk.android.BitPayAndroid;
 import com.bitpay.sdk.android.InvoiceActivity;
 import com.bitpay.sdk.android.interfaces.BitpayPromiseCallback;
 import com.bitpay.sdk.android.interfaces.InvoicePromiseCallback;
 import com.bitpay.sdk.controller.BitPayException;
+import com.bitpay.sdk.model.Invoice;
 
 import java.util.ArrayList;
 
 
 public class CartActivity extends Activity {
 
-    private Invoice invoice;
+    private static final String BITPAY_INVOICE = "BITPAY_INVOICE";
+    private static final String MY_INVOICE= "MY_INVOICE";
+    private MyInvoice invoice;
     private ArrayList<String> data = new ArrayList<String>();
     private double total = 0.0;
     private int PAYMENT_RESULT = 12;
+    private Invoice bitpayInvoice;
 
     private void sendInvoice() {
 
@@ -46,6 +50,7 @@ public class CartActivity extends Activity {
                     @Override
                     public void onSuccess(com.bitpay.sdk.model.Invoice invoice) {
 
+                        bitpayInvoice = invoice;
                         Intent invoiceIntent = new Intent(CartActivity.this, InvoiceActivity.class);
                         invoiceIntent.putExtra(InvoiceActivity.INVOICE, invoice);
                         invoiceIntent.putExtra(InvoiceActivity.CLIENT, bitpay);
@@ -79,7 +84,11 @@ public class CartActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PAYMENT_RESULT) {
             if (resultCode == InvoiceActivity.RESULT_OK) {
-                Toast.makeText(getApplicationContext(), "Thanks for shopping with us!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, ReceiptActivity.class);
+                intent.putExtra(ReceiptActivity.INVOICE, bitpayInvoice);
+                intent.putExtra(ReceiptActivity.MY_INVOICE, invoice);
+                startActivity(intent);
+                finish();
             }
             if (resultCode == InvoiceActivity.RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), "The payment was canceled", Toast.LENGTH_LONG).show();
@@ -98,9 +107,11 @@ public class CartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         if (savedInstanceState != null) {
-            invoice = savedInstanceState.getParcelable("invoice");
+            invoice = savedInstanceState.getParcelable(MY_INVOICE);
+            bitpayInvoice = savedInstanceState.getParcelable(BITPAY_INVOICE);
         } else {
-            invoice = getIntent().getExtras().getParcelable("invoice");
+            invoice = getIntent().getExtras().getParcelable(MY_INVOICE);
+            bitpayInvoice = getIntent().getExtras().getParcelable(BITPAY_INVOICE);
         }
         calculateValues();
         ((ListView) findViewById(R.id.listView)).setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data) {
@@ -132,7 +143,7 @@ public class CartActivity extends Activity {
     private void calculateValues() {
         data.clear();
         total = 0.0;
-        for (Item item : Invoice.ITEMS) {
+        for (Item item : MyInvoice.ITEMS) {
             if (invoice.get(item) != 0) {
                 double price = invoice.get(item) * item.price;
                 data.add(String.format("%d x %s ($ %.2f)", invoice.get(item), item.name, price));
@@ -142,14 +153,9 @@ public class CartActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BITPAY_INVOICE, bitpayInvoice);
+        outState.putParcelable(MY_INVOICE, invoice);
     }
 }

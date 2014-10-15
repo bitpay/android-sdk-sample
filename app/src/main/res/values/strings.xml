@@ -9,5 +9,6 @@
     <string name="checkout">Checkout</string>
     <string name="plus">+</string>
     <string name="token">MuwmfQQE54MqGquaR6WtzV</string>
+    <string name="title_activity_receipt">ReceiptActivity</string>
 
 </resources>

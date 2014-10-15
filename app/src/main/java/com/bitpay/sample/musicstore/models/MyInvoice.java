@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by eordano on 9/9/14.
  */
-public class Invoice implements Parcelable {
+public class MyInvoice implements Parcelable {
 
     public static ArrayList<Item> ITEMS = new ArrayList<Item>();
     static {
@@ -53,18 +53,18 @@ public class Invoice implements Parcelable {
             parcel.writeInt(get(item));
         }
     }
-    public static final Parcelable.Creator<Invoice> CREATOR = new Parcelable.Creator<Invoice>() {
-        public Invoice createFromParcel(Parcel in) {
-            return Invoice.fromParcel(in);
+    public static final Parcelable.Creator<MyInvoice> CREATOR = new Parcelable.Creator<MyInvoice>() {
+        public MyInvoice createFromParcel(Parcel in) {
+            return MyInvoice.fromParcel(in);
         }
 
-        public Invoice[] newArray(int size) {
-            return new Invoice[size];
+        public MyInvoice[] newArray(int size) {
+            return new MyInvoice[size];
         }
     };
 
-    public static Invoice fromParcel(Parcel parcel) {
-        Invoice newInvoice = new Invoice();
+    public static MyInvoice fromParcel(Parcel parcel) {
+        MyInvoice newInvoice = new MyInvoice();
         for (Item item : ITEMS) {
             int amount = parcel.readInt();
             if (amount != 0) {

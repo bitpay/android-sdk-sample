@@ -1,6 +1,7 @@
 package com.bitpay.sample.musicstore;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -74,6 +75,9 @@ public class CartActivity extends Activity {
                     public void onError(BitPayException e) {
                         dialog.dismiss();
                         e.printStackTrace();
+
+                        AlertDialog dialog = new AlertDialog.Builder(getApplicationContext()).setTitle("Creating Invoice").setMessage("Unable to create an invoice. Check your connection and token and try again.").create();
+                        dialog.show();
                     }
                 });
             }
@@ -82,6 +86,9 @@ public class CartActivity extends Activity {
             public void onError(BitPayException e) {
                 dialog.dismiss();
                 e.printStackTrace();
+
+                AlertDialog dialog = new AlertDialog.Builder(getApplicationContext()).setTitle("Creating BitPay Client").setMessage("Unable to connect to the server. Check your connection and token and try again.").create();
+                dialog.show();
             }
         });
     }

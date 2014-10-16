@@ -90,7 +90,6 @@
     <orderEntry type="library" exported="" name="slf4j-api-1.7.5" level="project" />
     <orderEntry type="library" exported="" name="jackson-annotations-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="protobuf-java-2.5.0" level="project" />
-    <orderEntry type="library" exported="" name="android-sdk-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="commons-codec-1.9" level="project" />
     <orderEntry type="library" exported="" name="scrypt-1.3.3" level="project" />
     <orderEntry type="library" exported="" name="sc-light-jdk15on-1.47.0.2" level="project" />

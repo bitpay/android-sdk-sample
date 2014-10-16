@@ -77,7 +77,7 @@ public class MainActivity extends ListActivity {
     protected void openCart() {
         Intent intent = new Intent(this, CartActivity.class);
         Bundle b = new Bundle();
-        b.putParcelable("invoice", invoice);
+        b.putParcelable(CartActivity.MY_INVOICE, invoice);
         intent.putExtras(b);
         startActivity(intent);
     }

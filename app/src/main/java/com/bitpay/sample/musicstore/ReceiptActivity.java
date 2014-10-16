@@ -34,6 +34,7 @@ public class ReceiptActivity extends Activity {
             if (invoice.get(item) > 0) {
                 View newView = inflater.inflate(android.R.layout.simple_list_item_1, null);
                 ((TextView) newView.findViewById(android.R.id.text1)).setText(invoice.get(item) + " x " + item.name);
+                layout.addView(newView);
             }
         }
     }

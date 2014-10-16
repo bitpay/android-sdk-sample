@@ -33,5 +33,5 @@ dependencies {
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5'
     compile 'commons-codec:commons-codec:1.9'
     compile 'com.google.zxing:core:2.0'
-    compile 'com.bitpay:android-sdk:0.6.4@aar'
+    compile 'com.bitpay:android-sdk:1.0.0@aar'
 }

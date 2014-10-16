@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +28,16 @@ import java.util.ArrayList;
 
 public class CartActivity extends Activity {
 
-    private static final String BITPAY_INVOICE = "BITPAY_INVOICE";
-    private static final String MY_INVOICE= "MY_INVOICE";
+    public static final String BITPAY_INVOICE = "BITPAY_INVOICE";
+    public static final String MY_INVOICE= "MY_INVOICE";
+
+    private static final int PAYMENT_RESULT = 12;
+
     private MyInvoice invoice;
     private ArrayList<String> data = new ArrayList<String>();
     private double total = 0.0;
-    private int PAYMENT_RESULT = 12;
     private Invoice bitpayInvoice;
+    private BitPayAndroid bitpay;
 
     private void sendInvoice() {
 
@@ -44,14 +48,17 @@ public class CartActivity extends Activity {
         dialog.setTitle("Creating invoice...");
         dialog.show();
         BitPayAndroid.withToken(getString(R.string.token), "https://test.bitpay.com/").then(new BitpayPromiseCallback() {
+
             @Override
             public void onSuccess(final BitPayAndroid bitpay) {
+                CartActivity.this.bitpay = bitpay;
                 bitpay.createNewInvoice(new com.bitpay.sdk.model.Invoice(total, "USD")).then(new InvoicePromiseCallback() {
                     @Override
                     public void onSuccess(com.bitpay.sdk.model.Invoice invoice) {
 
                         bitpayInvoice = invoice;
                         Intent invoiceIntent = new Intent(CartActivity.this, InvoiceActivity.class);
+                        Log.d("Invoice", invoice.getPaymentUrls().getBIP21());
                         invoiceIntent.putExtra(InvoiceActivity.INVOICE, invoice);
                         invoiceIntent.putExtra(InvoiceActivity.CLIENT, bitpay);
                         runOnUiThread(new Runnable() {
@@ -83,21 +90,29 @@ public class CartActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PAYMENT_RESULT) {
-            if (resultCode == InvoiceActivity.RESULT_OK) {
+            if (resultCode == InvoiceActivity.RESULT_PAID) {
                 Intent intent = new Intent(this, ReceiptActivity.class);
                 intent.putExtra(ReceiptActivity.INVOICE, bitpayInvoice);
                 intent.putExtra(ReceiptActivity.MY_INVOICE, invoice);
                 startActivity(intent);
                 finish();
             }
-            if (resultCode == InvoiceActivity.RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(), "The payment was canceled", Toast.LENGTH_LONG).show();
-            }
             if (resultCode == InvoiceActivity.RESULT_EXPIRED) {
                 Toast.makeText(getApplicationContext(), "The payment window expired", Toast.LENGTH_LONG).show();
             }
             if (resultCode == InvoiceActivity.RESULT_USER_CANCELED) {
-                Toast.makeText(getApplicationContext(), "Back button pressed", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "The payment was canceled", Toast.LENGTH_LONG).show();
+            }
+            if (resultCode == InvoiceActivity.RESULT_OVERPAID) {
+                Toast.makeText(getApplicationContext(), "The invoice was overpaid. Please contact us to request a refund.", Toast.LENGTH_LONG).show();
+            }
+            if (resultCode == InvoiceActivity.RESULT_PARTIALLY_PAID) {
+                Toast.makeText(getApplicationContext(), "The invoice was paid only partially. Please finish paying it.", Toast.LENGTH_LONG).show();
+
+                Intent invoiceIntent = new Intent(CartActivity.this, InvoiceActivity.class);
+                invoiceIntent.putExtra(InvoiceActivity.INVOICE, bitpayInvoice);
+                invoiceIntent.putExtra(InvoiceActivity.CLIENT, bitpay);
+                startActivityForResult(invoiceIntent, PAYMENT_RESULT);
             }
         }
     }
